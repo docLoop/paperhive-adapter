@@ -1,6 +1,6 @@
 # PaperhiveAdapter
 
-This packed is meant to be used with [docloop](https://github.com/docloop/core).
+This package is meant to be used with [docloop](https://github.com/docloop/core).
 
 Install like this:
 
