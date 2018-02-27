@@ -19,10 +19,17 @@ var		DocLoopAdapter 	= 	require('docloop').DocloopAdapter,
  * 
  * @memberof module:paperhiveAdapter
  * 
- * @extends {DocloopAdapter}
+ * @extends		{DocloopAdapter}
+ *
+ * @param		{DocloopCore} 		core
+ * @param		{Object}		 	config											Configuration object 
+ * @param		{String}			home											Website of the used paperhive instance.
+ * @param		{String}			contentLink										Url of paperhive doument's discussion. Use %s in this string to indicate the positin of the document's id.
+ * @param 		{Boolean} 			extraEndpoints									True iff there are addtional non privileged endpoints.
+ * @param 		{Number} 			scanningInterval								Time between two scans in milliseconds.
  * 
- * @property {Object} endpointDefaultConfig
- * @property {Object} endpointDefaultConfig.includePastAnnotations	If set to true, the adapter will collect all annotations from a source, 
+ * @property 	{Object} 			endpointDefaultConfig
+ * @property 	{Object} 			endpointDefaultConfig.includePastAnnotations	If set to true, the adapter will collect all annotations from a source, 
  * 																	as soon as a link is established. This might be undesirable for documents with a 
  * 																	large amount of annotations.
  */
