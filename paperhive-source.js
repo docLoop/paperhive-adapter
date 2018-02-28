@@ -9,8 +9,9 @@ const	DocloopEndpoint	=	require('docloop').DocloopEndpoint,
 
 /**
  * Class representing a paperhive document.
- * 
- * @memberOf  module:paperhiveAdapter
+ *
+ * @alias		PaperhiveSource
+ * @memberOf  	module:paperhiveAdapter
  * 
  * @extends {DocloopEndpoint}
  */
@@ -171,9 +172,11 @@ class PaperhiveSource extends DocloopEndpoint{
 	/**
 	 * Scan the source for new annotations and replies.
 	 * @async
-	 * @return {undefined}
-	 * @emits annotation
-	 * @emits Docloop~reply
+	 * 
+	 * @return undefined
+	 * 
+	 * @emits docloop~annotation
+	 * @emits docloop~reply
 	 */
 	async scan(){
 		var		now			=		Date.now(),

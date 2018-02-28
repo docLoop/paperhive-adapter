@@ -11,13 +11,16 @@ var		DocLoopAdapter 	= 	require('docloop').DocloopAdapter,
 /**
  * TODO: description!
  * @module  paperhiveAdapter
+ * @license GPL-3.0
+ * 
  */
 		
 
 /**
  * Adapter to harvest public annotations from paperhive.
- * 
- * @memberof module:paperhiveAdapter
+ *
+ * @alias		PaperhiveAdapter
+ * @memberof 	module:paperhiveAdapter
  * 
  * @extends		{DocloopAdapter}
  *
@@ -30,8 +33,8 @@ var		DocLoopAdapter 	= 	require('docloop').DocloopAdapter,
  * 
  * @property 	{Object} 			endpointDefaultConfig
  * @property 	{Object} 			endpointDefaultConfig.includePastAnnotations	If set to true, the adapter will collect all annotations from a source, 
- * 																	as soon as a link is established. This might be undesirable for documents with a 
- * 																	large amount of annotations.
+				 * 																	as soon as a link is established. This might be undesirable for documents with a 
+				 * 																	large amount of annotations.
  */
 class PaperhiveAdapter extends DocLoopAdapter {
 
@@ -68,7 +71,7 @@ class PaperhiveAdapter extends DocLoopAdapter {
 	/**
 	 * If the source matches this adapter it will be scanned for annotations and replies.
 	 * @param  {DocloopLink.skeleton}
-	 * @return {undefined}
+	 * @return undefined
 	 * @listens link-established
 	 */
 	async handleLinkEstablishedEvent(link){
@@ -82,7 +85,7 @@ class PaperhiveAdapter extends DocLoopAdapter {
 
 	/**
 	 * Scan all stored source for new annotations or replies
-	 * @return {undefined}
+	 * @return undefined
 	 */
 	async scanSources(){
 		//TODO: spread events? Dont handle all of them at the same time...
@@ -95,7 +98,7 @@ class PaperhiveAdapter extends DocLoopAdapter {
 	/**
 	 * There are no privileged endpoints. This Adapter only uses public paperhive documents.
 	 * 
-	 * @return {[type]}         [description]
+	 * @return {Array}         []
 	 */
 	async getEndpoints(){
 		return []
@@ -104,7 +107,7 @@ class PaperhiveAdapter extends DocLoopAdapter {
 	/**
 	 * There are no privileged endpoints. This Adapter only uses public paperhive documents.
 	 * 
-	 * @return {[type]}         [description]
+	 * @return {Array}         []
 	 */
 	async getStoredEndpoints(session_data){
 		return []
