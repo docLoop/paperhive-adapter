@@ -41,11 +41,12 @@ class PaperhiveSource extends DocloopEndpoint{
 	/**
 	 * Fetch document data from the paperhive API
 	 * @async
-	 * @param  	{String}	document_id		The paperhive document id
-	 * @return 	{Object}					The document's data
-	 * @throws	{Error}						If paperhive API request fails
+	 * @param  	{DocloopAdapter}	adapter			The adpater configured for a paperhive instance
+	 * @param  	{String}			document_id		The paperhive document id
+	 * @return 	{Object}							The document's data
+	 * @throws	{Error}							If paperhive API request fails
 	 */
-	static async getDocument(document_id){
+	static async getDocument(adapter, document_id){
 		try 	{ return request.get(adapter.config.documentLink.replace(/%s/,document_id))} 
 		catch(e){ throw new Error("PaperhiveSource.getDocument() unable to get document: "+ e) } //TODO Error type, status codr?
 
@@ -83,8 +84,8 @@ class PaperhiveSource extends DocloopEndpoint{
 
 	static documentToDecor(ph_document){
 		return {
-					title: 			ph_document.title,
-					details: 		ph_document.authors[0].name || ph_document.publisher
+					title: 			ph_document.metadata && ph_document.metadata.title,
+					details: 		ph_document.metadata && (ph_document.metadata.authors[0].name || ph_document.metadata.publisher)
 				} 
 	}
 
@@ -108,14 +109,15 @@ class PaperhiveSource extends DocloopEndpoint{
 		if(typeof str != 'string') throw new TypeError("PaperhiveSource.guess() only works on strings")
 
 		try {	
-			matches 	= 	str.match(/documents\/([^/]+)/) || str.match(/^([^/]+)$/)
+			matches 	= 	str.match(/documents\/items\/([^/]+)/) || str.match(/^([^/]+)$/)
 			document_id	= 	matches[1]
 		}
 		catch(e){ throw new DocloopError(`PaperhiveSource.guess() unable to guess document id from input string ${str}: ${e}`, 400) }
 
-			ph_document	=	await this.getDocument(document_id)
+			ph_document	=	await this.getDocument(adapter, document_id)
 
-		endpoint	=	PaperhiveSource.fromDocument(adapter, ph_document),
+		endpoint	=	PaperhiveSource.fromDocument(adapter, ph_document)
+
 		await endpoint.validate()
 
 		return endpoint
@@ -128,7 +130,8 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @throws {Error} 		If paperhive API request fails
 	 */
 	async getDiscussions(){
-		var result = await request.get(this.adaper.config.discussionsLink.replace(/%s/, this.identifier.document_id))
+		console.log(this.adapter.config.discussionsLink.replace(/%s/, this.identifier.document_id))
+		var result = await request.get(this.adapter.config.discussionsLink.replace(/%s/, this.identifier.document_id))
 		return result.discussions
 	}
 
@@ -226,6 +229,7 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @throws	{DocloopError}	If document's discussion are not readable
 	 */
 	async validate(){
+		console.log('####', !!this.adapter)
 		try		{	await this.getDiscussions() }
 		catch(e){	throw new DocloopError("PaperhiveSource.validate() unable to read discussions: " +e)}
 	}
@@ -233,7 +237,7 @@ class PaperhiveSource extends DocloopEndpoint{
 
 	//TODO:
 	async updateDecor(){
-		var ph_document = await PaperhiveSource.getDocument(this.identifier.document_id)
+		var ph_document = await PaperhiveSource.getDocument(this.adapter, this.identifier.document_id)
 
 		this.decor = PaperhiveSource.documentToDecor(ph_document)
 	}
