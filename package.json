@@ -1,6 +1,6 @@
 {
   "name": "docloop-paperhive-adapter",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "author": "Andreas Pittrich",
   "license": "GPL-3.0",
   "description": "Docloop source adapter to interact with paperhive",
