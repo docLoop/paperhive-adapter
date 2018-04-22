@@ -46,7 +46,7 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @throws	{Error}						If paperhive API request fails
 	 */
 	static async getDocument(document_id){
-		try 	{ return request.get(adapter.config.documentLink.replace(/%s/,document_id)} 
+		try 	{ return request.get(adapter.config.documentLink.replace(/%s/,document_id))} 
 		catch(e){ throw new Error("PaperhiveSource.getDocument() unable to get document: "+ e) } //TODO Error type, status codr?
 
 	}
@@ -128,7 +128,7 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @throws {Error} 		If paperhive API request fails
 	 */
 	async getDiscussions(){
-		var result = await request.get(this.adaper.config.discussionsLink.replace(/%s/, this.identifier.document_id)
+		var result = await request.get(this.adaper.config.discussionsLink.replace(/%s/, this.identifier.document_id))
 		return result.discussions
 	}
 
