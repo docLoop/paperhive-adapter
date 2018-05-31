@@ -66,14 +66,14 @@ class PaperhiveAdapter extends DocLoopAdapter {
 										home:					true,
 										contentLink:			true,
 										discussionsLink:		true,
-										documentLinkByItemId:	true,
-										documentLinkById:		true,
+										documentItemsById:		true,
+										documentItemByItemId:	true,
 										extraEndpoints:			true,
 										scanningInterval:		true
 								}
 
-		for(option in mandatory_config){
-			if(this.config[option] === undefned) throw new Error("PaperhiveAdapter.constructor(): missing config:",option)
+		for(var option in mandatory_config){
+			if(this.config[option] === undefined) throw new Error("PaperhiveAdapter.constructor(): missing config: "+option)
 		}
 
 		this.core.on('link-established', this.handleLinkEstablishedEvent.bind(this) )
