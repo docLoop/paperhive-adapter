@@ -26,9 +26,12 @@ var		DocLoopAdapter 	= 	require('docloop').DocloopAdapter,
  *
  * @param		{DocloopCore} 		core
  * @param		{Object}		 	config											Configuration object 
- * @param		{String}			home											Website of the used paperhive instance.
- * @param		{String}			contentLink										Url of paperhive doument's discussion. Use %s in this string to indicate the positin of the document's id.
- * @param 		{Boolean} 			extraEndpoints									True iff there are addtional non privileged endpoints.
+ * @param		{String}			config.home										Website of the used paperhive instance.
+ * @param		{String}			config.contentLink								Client Url of paperhive document. Use %s in this string to indicate the positin of the document's id.
+ * @param		{String}			config.documentItemsById						Api Url of paperhive document items. Use %s in this string to indicate the positin of the document's id.
+ * @param		{String}			config.documentItemByItemId						Api Url of paperhive document item. Use %s in this string to indicate the positin of the document's item id.
+ * 
+ * @param 		{Boolean} 			config.extraEndpoints							True iff there are addtional non privileged endpoints.
  * @param 		{Number} 			scanningInterval								Time between two scans in milliseconds.
  * 
  * @property 	{Object} 			endpointDefaultConfig
@@ -54,6 +57,24 @@ class PaperhiveAdapter extends DocLoopAdapter {
 
 		this.id 	= 'paperhive'
 		this.config = config
+
+
+
+		//May generelize for all adapters
+		var mandatory_config = 	{
+										name:					true,
+										home:					true,
+										contentLink:			true,
+										discussionsLink:		true,
+										documentLinkByItemId:	true,
+										documentLinkById:		true,
+										extraEndpoints:			true,
+										scanningInterval:		true
+								}
+
+		for(option in mandatory_config){
+			if(this.config[option] === undefned) throw new Error("PaperhiveAdapter.constructor(): missing config:",option)
+		}
 
 		this.core.on('link-established', this.handleLinkEstablishedEvent.bind(this) )
 

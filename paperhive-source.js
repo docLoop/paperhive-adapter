@@ -32,7 +32,6 @@ class PaperhiveSource extends DocloopEndpoint{
 			data
 		})		
 
-
 		if(!identifier.document_id)				throw new ReferenceError("PaperhiveSource.constructor() missing identifier.document_id")
 		if(adapter.id != identifier.adapter)	throw new Error("PaperhiveSource.constructor() adapter mismatch")
 	}
@@ -51,8 +50,8 @@ class PaperhiveSource extends DocloopEndpoint{
 
 		var url, response
 
-		if(document_id)			url = 	adapter.config.documentLinkById.replace(/%s/,document_id)
-		if(document_item_id)	url	=	adapter.config.documentLinkByItemId.replace(/%s/,document_item_id)
+		if(document_id)			url = 	adapter.config.documentItemsById.replace(/%s/,document_id)
+		if(document_item_id)	url	=	adapter.config.documentItemByItemId.replace(/%s/,document_item_id)
 
 		console.log(url)
 
