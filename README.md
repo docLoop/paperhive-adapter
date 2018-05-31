@@ -14,11 +14,14 @@ var PaperhiveAdapter = require('docloop-paperhive-adapter').PaperhiveAdapter
 
 docloopCore
 .use(PaperhiveAdapter,{
-  name:             "PaperHive",
-  home:             'https://paperhive.org',
-  contentLink:      'https://paperhive.org/documents/%s/discussions',
-  extraEndpoints:    true,
-  scanningInterval:  60*60*1000
+  name:             	"PaperHive",
+  home:             	'https://paperhive.org',
+  contentLink:			'https://paperhive.org/documents/items/%s',
+  discussionsLink:		'https://paperhive.org/api/discussions?document=%s',
+  documentLinkById:		'https://paperhive.org/api/document-items/by-document/%s',
+  documentLinkByIemId:	'https://paperhive.org/api/document-items/%s',
+  extraEndpoints:    	true,
+  scanningInterval:  	60*60*1000
 })
 ```
 
