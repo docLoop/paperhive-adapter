@@ -50,18 +50,17 @@ class PaperhiveSource extends DocloopEndpoint{
 
 		var url, response
 
+
+
 		if(document_id)			url = 	adapter.config.documentItemsById.replace(/%s/,document_id)
 		if(document_item_id)	url	=	adapter.config.documentItemByItemId.replace(/%s/,document_item_id)
 
-		console.log(url)
 
 		if(!url) throw new Error("PaperhiveSource.getDocument() missing id")
 
 		try 	{  response = await request.get(url)} 
 		catch(e){ throw new Error("PaperhiveSource.getDocument() unable to get document: "+ e) } //TODO Error type, status code?
 
-
-		console.log(response)
 
 		return 	document_item_id
 				?	response
@@ -260,7 +259,6 @@ class PaperhiveSource extends DocloopEndpoint{
 
 		try {
 			ph_document = await PaperhiveSource.getDocument(this.adapter, this.identifier.document_id)
-			console.log(ph_document)
 		}catch(e){
 			ph_document = null
 		}

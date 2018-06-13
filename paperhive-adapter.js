@@ -68,7 +68,6 @@ class PaperhiveAdapter extends DocLoopAdapter {
 										discussionsLink:		true,
 										documentItemsById:		true,
 										documentItemByItemId:	true,
-										extraEndpoints:			true,
 										scanningInterval:		true
 								}
 
