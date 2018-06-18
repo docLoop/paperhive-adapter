@@ -206,7 +206,8 @@ class PaperhiveSource extends DocloopEndpoint{
 
 		if(!last_scan)	last_scan = 	this.config.includePastAnnotations
 										?	0
-										:	new Date()
+										:	Date.now()
+
 
 		discussions.forEach( discussion => {
 

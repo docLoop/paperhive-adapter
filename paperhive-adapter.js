@@ -110,9 +110,13 @@ class PaperhiveAdapter extends DocLoopAdapter {
 	async scanSources(){
 		//TODO: spread events? Dont handle all of them at the same time...
 
-		var sources = await this.getStoredEndpoints()
+		var raw_sources = await this.endpoints.find({}).toArray()
 
-		sources.forEach( source => source.scan() )
+		return 	Promise.all(
+					raw_sources
+					.map(		data	=> this.newEndpoint(data))
+					.map( 		source 	=> source.scan() )
+				)
 	}
 
 	/**
