@@ -27,7 +27,7 @@ var		DocLoopAdapter 	= 	require('docloop').DocloopAdapter,
  * @param		{DocloopCore} 		core
  * @param		{Object}		 	config											Configuration object 
  * @param		{String}			config.home										Website of the used paperhive instance.
- * @param		{String}			config.contentLink								Client Url of paperhive document. Use %s in this string to indicate the positin of the document's id.
+ * @param		{String}			config.contentLink								Client Url of paperhive document. Use %s in this string to indicate the positin of the document's id and %t for comment id.
  * @param		{String}			config.documentItemsById						Api Url of paperhive document items. Use %s in this string to indicate the positin of the document's id.
  * @param		{String}			config.documentItemByItemId						Api Url of paperhive document item. Use %s in this string to indicate the positin of the document's item id.
  * 

@@ -50,16 +50,13 @@ class PaperhiveSource extends DocloopEndpoint{
 
 		var url, response
 
-
-
 		if(document_id)			url = 	adapter.config.documentItemsById.replace(/%s/,document_id)
 		if(document_item_id)	url	=	adapter.config.documentItemByItemId.replace(/%s/,document_item_id)
 
-
 		if(!url) throw new Error("PaperhiveSource.getDocument() missing id")
 
-		try 	{  response = await request.get(url)} 
-		catch(e){ throw new Error("PaperhiveSource.getDocument() unable to get document: "+ e) } //TODO Error type, status code?
+		try 	{  	response = await request.get(url)} 
+		catch(e){ 	throw new Error("PaperhiveSource.getDocument() unable to get document: "+ e) } //TODO Error type, status code?
 
 
 		return 	document_item_id
@@ -109,7 +106,6 @@ class PaperhiveSource extends DocloopEndpoint{
 					} 
 	}
 
-
 	/**
 	 * Tries to guess a document id from provided string and create a new instance of {@link PaperhiveSource} associated with it.
 	 * @async
@@ -121,19 +117,26 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @throws {DocloopError} 					If str contains no matchable document_id
 	 */
 	static async guess(adapter, str){
+
+
 		var matches, ph_document, document_item_id, endpoint
 
 		if(!adapter) throw new ReferenceError("PaperhiveSource.guess() missing adapter")
 
 		if(typeof str != 'string') throw new TypeError("PaperhiveSource.guess() only works on strings")
 
-		try {	
-			matches 			= 	str.match(/documents\/items\/([^/]+)/) || str.match(/^([^/]+)$/)
-			document_item_id	= 	matches[1]
-		}
-		catch(e){ throw new DocloopError(`PaperhiveSource.guess() unable to guess document id from input string ${str}: ${e}`, 400) }
+		var match_item_id		= 	str.match(/documents\/items\/([^/]+)/),
+			document_item_id	=	match_item_id && match_item_id[1],
+			match_id			=	!document_item_id && str.match(/documents\/([^/]+)/), //https://paperhive.org/documents/YEkPZQhJDTew
+			document_id			=	match_id && match_id[1]
 
-		ph_document	=	await this.getDocument(adapter, null, document_item_id)
+
+		ph_document	=	await	this.getDocument(adapter, document_id, document_item_id)
+								.catch( ()	=> this.getDocument(adapter, str, 	null))
+								.catch( ()	=> this.getDocument(adapter, null,	str))
+								.catch( ()	=> null)
+
+		if(!ph_document)	throw new DocloopError(`PaperhiveSource.guess() unable to guess document working id from input string ${str}`, 400) 
 
 		endpoint	=	PaperhiveSource.fromDocument(adapter, ph_document)
 
@@ -160,15 +163,29 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @return {Annotation}
 	 */
 	phDiscussion2Annotation(discussion){
+		console.log(discussion)
+
+
+		function findValues(obj, key){
+			if(!key) 					return []
+			if(typeof obj != 'object') 	return []
+
+			return Object.keys(obj).reduce( (sum, sub) => sum.concat(findValues(obj[sub], key)), obj[key] ? [obj[key]] : [] )
+		}
+
+		var page = findValues(discussion.target.selectors, 'pageNumber')[0]
+
 		return {
 			id:						discussion.id,
 			sourceName:				this.adapter.config.name,
 			sourceHome:				this.adapter.config.home,
-			title:					discussion.title,
+			title:					discussion.title + (page ? ` (p. ${page})` : ''),
 			author:					discussion.author.displayName,
 			body:					discussion.body,
 			respectiveContent:		discussion.target.selectors.textQuote.content,
-			original:				this.adapter.config.contentLink.replace(/%s/, discussion.target.document),
+			original:				this.adapter.config.contentLink
+									.replace(/%s/, discussion.target.documentItem)
+									.replace(/%t/, discussion.id)
 		}
 	}
 
@@ -177,7 +194,7 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @param  {Object}		discussion
 	 * @return {Annotation}
 	 */
-	phReply2Reply(reply){
+	phReply2Reply(reply, discussion){
 		return {
 			parentId:				reply.discussion,
 			id:						reply.id,
@@ -185,7 +202,9 @@ class PaperhiveSource extends DocloopEndpoint{
 			sourceHome:				this.adapter.config.home,
 			author:					reply.author.displayName,
 			body:					reply.body,
-			original:				this.adapter.config.contentLink.replace(/%s/, reply.document),
+			original:				this.adapter.config.contentLink
+									.replace(/%s/, discussion.target.documentItem)
+									.replace(/%t/, discussion.id)
 		}
 	}
 
@@ -200,6 +219,9 @@ class PaperhiveSource extends DocloopEndpoint{
 	 * @emits docloop~reply
 	 */
 	async scan(){
+
+		console.log('Paperhive: scanning ', this.identifier.document_id)
+
 		var		now			=		Date.now(),
 		 		last_scan 	= 		await this.getData('lastScan'),							
 				discussions = 		await this.getDiscussions()
@@ -207,7 +229,6 @@ class PaperhiveSource extends DocloopEndpoint{
 		if(!last_scan)	last_scan = 	this.config.includePastAnnotations
 										?	0
 										:	Date.now()
-
 
 		discussions.forEach( discussion => {
 
@@ -230,7 +251,7 @@ class PaperhiveSource extends DocloopEndpoint{
 					this.adapter.emit(
 						'reply',
 						{
-							reply:	this.phReply2Reply(reply),
+							reply:	this.phReply2Reply(reply, discussion),
 							source:	this.skeleton
 						}
 					)
